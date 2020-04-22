@@ -24,18 +24,30 @@
       >
       </el-switch>
       <div class="cc-df cc-mtop">
+        <el-input
+          placeholder="请输入验证码"
+          class="code-input"
+          v-model="codeInput"
+          clearable
+        ></el-input>
+        <el-button
+          type="primary"
+          plain
+          class="btn1-login"
+          @click="codePhoto()"
+        >获取验证码</el-button>
+        <img
+          class="verify"
+          ref="codeImg"
+        />
+      </div>
+      <div class="cc-df cc-mtop">
         <el-button
           type="primary"
           plain
           class="btn-login"
           @click="submit()"
         >提交</el-button>
-        <el-button
-          type="primary"
-          plain
-          class="btn-login address"
-          @click="clear"
-        >重置</el-button>
       </div>
     </div>
   </div>
@@ -48,6 +60,7 @@ export default {
     return {
       mobileInput: '',
       passwordInput: '',
+      codeInput: '',
       value: true
     }
   },
@@ -61,52 +74,78 @@ export default {
     closeSimpleDialog() {
       this.openSimple = false
     },
-    submit() {
-      //模拟后端接口数据
-      let user = {
-        userId: '1802333117',
-        username: 'Tao.',
-        userRole: 'admin',
-        avatar: 'https://niit-student.oss-cn-beijing.aliyuncs.com/markdown/1.jpg'
-      }
-      this.menuList = [
-        { title: 'Dashboard', icon: 'mdi-view-dashboard', url: '/dashboard', subMenus: [] },
-        {
-          title: '音乐管理',
-          icon: 'mdi-music',
-          url: '',
-          subMenus: [
-            {
-              title: '歌单管理',
-              icon: 'mdi-domain',
-              url: '/music-list',
-              permissions: []
-            },
-            {
-              title: '歌曲管理',
-              icon: 'mdi-text',
-              url: '/music',
-              permissions: ['music:add', 'music:edit', 'music:delete']
-            }
-          ]
-        },
-        { title: 'About', icon: 'mdi-help-box', url: '/about', subMenus: [] }
-      ]
-      localStorage.setItem('token', 'EcIHTAWoGrmMVvTu2LPvuL-siq6hAfieVeehl-HTe_M')
-      localStorage.setItem('user', JSON.stringify(user))
-      localStorage.setItem('menuList', JSON.stringify(this.menuList))
-      this.$store.commit('setToken', 'EcIHTAWoGrmMVvTu2LPvuL-siq6hAfieVeehl-HTe_M')
-      this.$store.commit('setUser', user)
-      this.$store.commit('setMenuList', this.menuList)
-      this.$router.push('/')
+    codePhoto() {
+      this.$axios({
+        method: 'get',
+        url: this.GLOBAL.baseUrl + 'captcha/' + this.mobileInput,
+        // headers:{},
+        responseType: 'blob'
+      })
+        .then((res) => {
+          var img = this.$refs.codeImg
+          let url = window.URL.createObjectURL(res.data)
+          img.src = url
+          //取得后台通过响应头返回的sessionId的值
+          this.token = res.headers['access-token']
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
     },
-    clear() {
-      this.$refs.form.clear()
-      this.validateForm = {
-        username: '',
-        password: '',
-        isAgree: false
-      }
+    submit() {
+      this.$axios({
+        method: 'post',
+        url: this.GLOBAL.baseUrl + 'sysAdmin/login',
+        data: {
+          name: this.mobileInput,
+          password: this.passwordInput,
+          verifyCode: this.codeInput
+        }
+      })
+        .then((res) => {
+          localStorage.setItem('token', res.data.data)
+          this.$store.commit('setToken', res.data.data)
+          this.user()
+          this.menu()
+          if (res.data.msg == '成功') {
+            this.$router.push('/')
+          }
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    user() {
+      this.$axios({
+        method: 'get',
+        url: this.GLOBAL.baseUrl + 'sysAdmin/' + this.mobileInput
+      })
+        .then((res) => {
+          alert(1)
+          console.log(res)
+          this.users = res.data.data[0]
+          console.log(this.users)
+          localStorage.setItem('user', JSON.stringify(this.users))
+          this.$store.commit('setUser', this.users)
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    menu() {
+      this.$axios({
+        method: 'get',
+        url: this.GLOBAL.baseUrl + 'roleMenu/all/' + this.mobileInput
+      })
+        .then((res) => {
+          this.menuLists = res.data.data[0].Menus
+          console.log(this.menuLists)
+          localStorage.setItem('menuLists', JSON.stringify(this.menuLists))
+          this.$store.commit('setMenuLists', this.menuLists)
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
     }
   },
   computed: {}
@@ -139,14 +178,27 @@ export default {
   margin-top: 5.5%;
 }
 .btn-login {
-  margin-top: 20px;
   width: 100px;
   height: 40px;
+}
+.btn1-login {
+  width: 100px;
+  height: 40px;
+  margin-left: 10px;
+}
+.code-input {
+  width: 40%;
+  margin-left: 30px;
 }
 .address {
   margin-left: 200px;
 }
 .title-style {
   margin-top: 60px;
+}
+.verify {
+  margin-left: 10px;
+  width: 90px;
+  height: 40px;
 }
 </style>

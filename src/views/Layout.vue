@@ -11,7 +11,7 @@
           alt="头像"
           class="avatar-style"
         >
-        <h1 class="log-out">{{user.userRole}}</h1>
+        <h1 class="log-out">{{user.role_name}}</h1>
         <h1
           class="log-out"
           @click="logout()"
@@ -29,7 +29,7 @@
             :key="index"
           >
             <div
-              @click="show(item.isshow,index)"
+              @click="show(item.status,index)"
               class="cc-btn"
             >
               <MenuCard :item="item"></MenuCard>
@@ -37,9 +37,11 @@
             <div
               v-for="(item1,index1) in item.subMenus"
               :key="index1"
-              v-if="item.isshow"
             >
-              <SubMenuCard :item1="item1"></SubMenuCard>
+              <div v-if="item.status">
+                <SubMenuCard :item1="item1"></SubMenuCard>
+              </div>
+
             </div>
           </div>
         </div>
@@ -58,7 +60,7 @@ export default {
   data() {
     return {
       user: this.$store.state.user,
-      items: this.$store.state.menuList1,
+      items: this.$store.state.menuLists,
       icon: 'el-icon-delete'
     }
   },
@@ -67,7 +69,10 @@ export default {
     SubMenuCard: require('../components/SubMenuCard').default
   },
   created() {},
-  mounted() {},
+  mounted() {
+    console.log('users: ' + this.user)
+    console.log(this.items)
+  },
   methods: {
     logout() {
       alert('logout')
@@ -76,7 +81,11 @@ export default {
       this.$router.push('/login')
     },
     show(isshow1, index) {
-      this.items[index].isshow = !isshow1
+      if (isshow1 == 0) {
+        this.items[index].status = 1
+      } else {
+        this.items[index].status = 0
+      }
     }
   },
   computed: {}

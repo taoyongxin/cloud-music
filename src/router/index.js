@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Layout from '../views/Layout.vue'
 import Index from '../views/Index.vue'
 import MusicList from '../views/MusicList.vue'
+import MusicType from '../views/MusicType.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -10,7 +11,7 @@ const routes = [
     path: '/',
     name: 'Layout',
     component: Layout,
-    children:[
+    children: [
       {
         path: '/',
         name: 'Index',
@@ -25,6 +26,11 @@ const routes = [
         path: '/music-list',
         name: 'musicList',
         component: MusicList
+      },
+      {
+        path: '/type',
+        name: 'MusicType',
+        component: MusicType
       }
     ]
   },

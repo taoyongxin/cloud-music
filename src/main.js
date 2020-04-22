@@ -11,20 +11,20 @@ import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
 
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-Vue.use(ElementUI);
+Vue.use(ElementUI)
 
 Vue.use(VueMaterial)
 
 Vue.prototype.GLOBAL = global_
 
-Vue.use(VueAxios, axios)
+Vue.prototype.$axios = axios
 
 Vue.config.productionTip = false
 
@@ -54,5 +54,5 @@ router.beforeEach((to, from, next) => {
 new Vue({
   router,
   store,
-  render: h => h(App)
+  render: (h) => h(App)
 }).$mount('#app')

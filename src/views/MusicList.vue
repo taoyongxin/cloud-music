@@ -1,29 +1,40 @@
 <template>
-  <div>
-    <div class="top-style">
-      <div class="card">
-        <div class="small-card one-color">
-          <i class="iconfont music-number-icon">&#xe636;</i>
+  <div class="cc-donghua position-style">
+    <div class="cc-col-center">
+      <h1>歌单管理</h1>
+      <!-- <hr class="cc-mltop cc-mbottom " /> -->
+      <div class="hr-style"></div>
+      <div
+        v-for="(item, index) in musics"
+        :key="index"
+      >
+        <div @click="play(item.src)">
+          <myMusic :item="item"></myMusic>
         </div>
-        <h1 class="font-style">歌单总数：588</h1>
       </div>
-      <div class="card">
-        <div class="small-card two-color">
-          <i class="iconfont music-number-icon">&#xe636;</i>
-        </div>
-        <h1 class="font-style">今日新增：60</h1>
+      <div>
+        <audio
+          :src="musicUrl"
+          @play="ready"
+          @pause="pause"
+          ref='audioExample'
+          controls
+        ></audio>
       </div>
-      <div class="card">
-        <div class="small-card three-color">
-          <i class="iconfont music-number-icon">&#xe636;</i>
-        </div>
-        <h1 class="font-style">今日修改：25</h1>
-      </div>
-      <div class="card">
-        <div class="small-card four-color">
-          <i class="iconfont music-number-icon">&#xe636;</i>
-        </div>
-        <h1 class="font-style">今日下架：16</h1>
+      <div class="cc-df">
+        <button
+          class="cc-btn btn-size"
+          @click="dele()"
+        >上一页</button>
+        <input
+          type="number"
+          v-model="page"
+          class="input-size cc-mright cc-mleft"
+        />
+        <button
+          class="cc-btn btn-size"
+          @click="add()"
+        >下一页</button>
       </div>
     </div>
   </div>
@@ -31,58 +42,107 @@
 
 <script>
 export default {
-  name: 'MusicList',
   data() {
-    return {}
+    return {
+      classes: [],
+      musics: [],
+      page: 1,
+      musicUrl: 'http://music.163.com/song/media/outer/url?id=1436753138.mp3'
+    }
   },
-  components: {},
-  created() {},
+  components: {
+    myMusic: require('../components/MyMusic').default
+  },
+  created() {
+    this.selectMusic()
+  },
   mounted() {},
-  methods: {},
-  computed: {}
+  methods: {
+    play(music) {
+      this.musicUrl = music
+      var audio = this.$refs.audioExample
+      audio.currentTime = 0
+      audio.play()
+    },
+    ready() {
+      console.log('play click')
+    },
+    pause() {
+      console.log('pause click')
+    },
+    change1(index) {
+      document.getElementById(index).style.backgroundColor = '#f0f0f0'
+    },
+    change2(index) {
+      document.getElementById(index).style.backgroundColor = '#ffffff'
+    },
+    dele() {
+      if (this.page > 1) {
+        this.page--
+        this.selectMusic()
+      }
+    },
+    add() {
+      this.page++
+      this.selectMusic()
+    },
+    selectMusic() {
+      this.$axios({
+        method: 'post',
+        url: this.GLOBAL.baseUrl + '/songList/all',
+        data: {
+          currentPage: this.page,
+          pageSize: 10
+        }
+      })
+        .then((res) => {
+          this.musics = res.data.data
+          console.log(this.musics)
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
+    }
+  },
+  computed: {},
+  watch: {
+    currentSong() {
+      //监听正在播放的歌曲改变
+      this.$nextTick(() => {
+        this.$refs.audio.play()
+        console.log(this.$refs.audio.duration) //此时duration为NaN
+      })
+    }
+  }
 }
 </script>
 
 <style scoped lang="scss">
-.top-style {
-  width: 1200px;
-  height: 200px;
-  margin-left: 100px;
-  display: flex;
-  margin-top: 80px;
+.container {
+  width: 70%;
+  margin: auto;
+  background-color: white;
+  border: 1px black solid;
 }
-.card {
-  flex: 0 0 24%;
-  margin-right: 15px;
-  background-color: rgb(185, 203, 213);
-  border-radius: 10px;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+.card-left {
+  border-right: 1px black solid;
 }
-.small-card {
-  width: 100px;
-  height: 100px;
-  border-radius: 10px;
-  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
-  margin-left: 20px;
-  margin-top: -30px;
+.btn-size {
+  width: 60px;
+  height: 20px;
 }
-.one-color {
-  background-color: rgb(252, 152, 17);
+.input-size {
+  width: 50px;
 }
-.two-color {
-  background-color: rgb(78, 168, 82);
+.position-style {
+  margin-top: 100px;
+  margin-left: 300px;
 }
-.three-color {
-  background-color: rgb(236, 75, 72);
-}
-.four-color {
-  background-color: rgb(16, 183, 203);
-}
-.music-number-icon {
-  font-size: 80px;
-}
-.font-style {
-  margin-top: 40px;
-  margin-left: 20px;
+.hr-style {
+  width: 800px;
+  height: 1px;
+  background-color: #000;
+  margin-top: 50px;
+  margin-bottom: 50px;
 }
 </style>
