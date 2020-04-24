@@ -11,7 +11,7 @@
           alt="头像"
           class="avatar-style"
         >
-        <h1 class="log-out">{{user.role_name}}</h1>
+        <h1 class="log-out">{{job}}</h1>
         <h1
           class="log-out"
           @click="logout()"
@@ -46,7 +46,7 @@
           </div>
         </div>
       </div>
-      <div>
+      <div style="width:800px">
         <router-view />
       </div>
     </div>
@@ -61,14 +61,23 @@ export default {
     return {
       user: this.$store.state.user,
       items: this.$store.state.menuLists,
-      icon: 'el-icon-delete'
+      icon: 'el-icon-delete',
+      authority: this.$store.state.authority,
+      jobL: ''
     }
   },
   components: {
     MenuCard: require('../components/MenuCard.vue').default,
     SubMenuCard: require('../components/SubMenuCard').default
   },
-  created() {},
+  created() {
+    if (this.authority == 1) {
+      this.job = 'admin'
+    }
+    if (this.authority == 2) {
+      this.job = 'editor'
+    }
+  },
   mounted() {
     console.log('users: ' + this.user)
     console.log(this.items)

@@ -3,9 +3,11 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import axios from 'axios'
-import VueAxios from 'vue-axios'
 
 import global_ from '@/util/Global'
+
+import ViewUI from 'view-design'
+import 'view-design/dist/styles/iview.css'
 
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
@@ -15,6 +17,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
 import Vuex from 'vuex'
+Vue.use(ViewUI)
 
 Vue.use(Vuex)
 

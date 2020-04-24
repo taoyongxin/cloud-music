@@ -1,6 +1,6 @@
 <template>
   <div class="Menu-card cc-df">
-    <i :class="item1.icon"></i>
+    <Icon :type="item1.icon" />
     <div v-if="item1.path!=null">
       <router-link :to="item1.path">
         <p><b>{{item1.title}}</b></p>

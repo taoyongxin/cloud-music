@@ -5,7 +5,8 @@ const store = new Vuex.Store({
   state: {
     token: localStorage.getItem('token'),
     user: JSON.parse(localStorage.getItem('user')),
-    menuLists: JSON.parse(localStorage.getItem('menuLists'))
+    menuLists: JSON.parse(localStorage.getItem('menuLists')),
+    authority: localStorage.getItem('authority')
   },
   mutations: {
     setToken(state, data) {
@@ -16,6 +17,9 @@ const store = new Vuex.Store({
     },
     setMenuLists(state, data) {
       state.menuLists = data
+    },
+    setAuthority(state, data) {
+      state.authority = data
     }
   },
   actions: {}

@@ -41,6 +41,16 @@
           ref="codeImg"
         />
       </div>
+      <div class="cc-df cc-mtop cc-mlleft">
+        <el-radio
+          v-model="radio"
+          label="1"
+        >admin</el-radio>
+        <el-radio
+          v-model="radio"
+          label="2"
+        >editor</el-radio>
+      </div>
       <div class="cc-df cc-mtop">
         <el-button
           type="primary"
@@ -61,7 +71,12 @@ export default {
       mobileInput: '',
       passwordInput: '',
       codeInput: '',
-      value: true
+      menuLists: [],
+      users: {},
+      radio: '',
+      authority1: '',
+      value: true,
+      type: 'error'
     }
   },
   components: {},
@@ -103,30 +118,43 @@ export default {
         }
       })
         .then((res) => {
-          localStorage.setItem('token', res.data.data)
-          this.$store.commit('setToken', res.data.data)
-          this.user()
-          this.menu()
           if (res.data.msg == '成功') {
-            this.$router.push('/')
+            localStorage.setItem('token', res.data.data.token)
+            this.$store.commit('setToken', res.data.data.token)
+
+            for (let i = 0; i < res.data.data.admin.roles.length; i++) {
+              if (this.radio == res.data.data.admin.roles[i].roleId) {
+                this.authority1 = res.data.data.admin.roles[i].roleId
+              }
+            }
+            localStorage.setItem('authority', this.authority1)
+            this.$store.commit('setAuthority', this.authority1)
+
+            this.users = res.data.data.admin
+            localStorage.setItem('user', JSON.stringify(this.users))
+            this.$store.commit('setUser', this.users)
+
+            this.menu()
           }
-        })
-        .catch(function(error) {
-          console.log(error)
-        })
-    },
-    user() {
-      this.$axios({
-        method: 'get',
-        url: this.GLOBAL.baseUrl + 'sysAdmin/' + this.mobileInput
-      })
-        .then((res) => {
-          alert(1)
-          console.log(res)
-          this.users = res.data.data[0]
-          console.log(this.users)
-          localStorage.setItem('user', JSON.stringify(this.users))
-          this.$store.commit('setUser', this.users)
+
+          if ('密码错误' == res.data.msg) {
+            this.$Message[this.type]({
+              background: true,
+              content: '密码错误'
+            })
+          }
+          if ('用户不存在' == res.data.msg) {
+            this.$Message[this.type]({
+              background: true,
+              content: '用户不存在'
+            })
+          }
+          if ('验证码失效' == res.data.msg) {
+            this.$Message[this.type]({
+              background: true,
+              content: '验证码失效'
+            })
+          }
         })
         .catch(function(error) {
           console.log(error)
@@ -135,13 +163,24 @@ export default {
     menu() {
       this.$axios({
         method: 'get',
-        url: this.GLOBAL.baseUrl + 'roleMenu/all/' + this.mobileInput
+        url: this.GLOBAL.baseUrl + 'sysRole?roleId=' + this.radio,
+        headers: { Authorization: localStorage.getItem('token') }
       })
         .then((res) => {
-          this.menuLists = res.data.data[0].Menus
-          console.log(this.menuLists)
-          localStorage.setItem('menuLists', JSON.stringify(this.menuLists))
-          this.$store.commit('setMenuLists', this.menuLists)
+          if (res.data.msg == '成功') {
+            this.menuLists = res.data.data.menus
+            localStorage.setItem('menuLists', JSON.stringify(this.menuLists))
+            this.$store.commit('setMenuLists', this.menuLists)
+            this.$Message.success('登录成功')
+            this.$router.push('/')
+          }
+
+          if ('无访问权限' == res.data.msg) {
+            this.$Message[this.type]({
+              background: true,
+              content: '无访问权限'
+            })
+          }
         })
         .catch(function(error) {
           console.log(error)

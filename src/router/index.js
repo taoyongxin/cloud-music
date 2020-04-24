@@ -4,6 +4,7 @@ import Layout from '../views/Layout.vue'
 import Index from '../views/Index.vue'
 import MusicList from '../views/MusicList.vue'
 import MusicType from '../views/MusicType.vue'
+import Music from '../views/Music.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -31,6 +32,11 @@ const routes = [
         path: '/type',
         name: 'MusicType',
         component: MusicType
+      },
+      {
+        path: '/music',
+        name: 'music',
+        component: Music
       }
     ]
   },

@@ -67,29 +67,21 @@
         md-auto-select
       >
         <md-table-cell
-          md-label="歌单名"
+          md-label="类型Id"
           md-sort-by="songListName"
-        >{{ item.songListName }}</md-table-cell>
+        >{{ item.typeId }}</md-table-cell>
         <md-table-cell
-          md-label="类型"
+          md-label="类型名称"
           md-sort-by="type"
-        >{{ item.type }}</md-table-cell>
+        >{{ item.typeName }}</md-table-cell>
         <md-table-cell
           md-label="歌曲数"
           md-sort-by="songCount"
         >{{ item.songCount }}</md-table-cell>
         <md-table-cell
-          md-label="收藏数"
+          md-label="创建时间"
           md-sort-by="likeCount"
-        >{{ item.likeCount }}</md-table-cell>
-        <md-table-cell
-          md-label="评论数"
-          md-sort-by="commentCount"
-        >{{ item.commentCount }}</md-table-cell>
-        <md-table-cell
-          md-label="播放量"
-          md-sort-by="playCounts"
-        >{{ item.playCounts }}</md-table-cell>
+        >{{ item.createTime }}</md-table-cell>
       </md-table-row>
     </md-table>
     <div
@@ -98,7 +90,7 @@
     >
       <Page
         :current.sync="page"
-        :total="3000"
+        :total="60"
         simple
         style="margin-left:500px;margin-top:20px;"
       />
@@ -206,7 +198,7 @@ export default {
     selectMusic() {
       this.$axios({
         method: 'post',
-        url: this.GLOBAL.baseUrl + '/songList/page?roleId=' + this.authority,
+        url: this.GLOBAL.baseUrl + '/songType/page?roleId=' + this.authority,
         data: {
           currentPage: this.page,
           pageSize: 12
