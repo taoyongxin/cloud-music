@@ -51,6 +51,7 @@
           label="2"
         >editor</el-radio>
       </div>
+      <button @click="login()">点击这里进行Github第三方登录</button>
       <div class="cc-df cc-mtop">
         <el-button
           type="primary"
@@ -88,6 +89,12 @@ export default {
     },
     closeSimpleDialog() {
       this.openSimple = false
+    },
+    login() {
+      const authorize_uri = 'https://github.com/login/oauth/authorize'
+      const client_id = '97b4b68b2083934d520f'
+      const redirect_uri = 'http://localhost:8080/login/oauth2/code/github'
+      window.location.href = `${authorize_uri}?client_id=${client_id}&redirect_uri=${redirect_uri}`
     },
     codePhoto() {
       this.$axios({
@@ -164,7 +171,10 @@ export default {
       this.$axios({
         method: 'get',
         url: this.GLOBAL.baseUrl + 'sysRole?roleId=' + this.radio,
-        headers: { Authorization: localStorage.getItem('token') }
+        headers: {
+          Authorization: localStorage.getItem('token'),
+          id: JSON.parse(localStorage.getItem('user')).id
+        }
       })
         .then((res) => {
           if (res.data.msg == '成功') {
@@ -202,7 +212,7 @@ export default {
 .login-card {
   // background-color: whitesmoke;
   width: 30%;
-  height: 45%;
+  height: 50%;
   margin-top: 12%;
   display: flex;
   flex-direction: column;

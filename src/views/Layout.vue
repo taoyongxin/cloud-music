@@ -5,12 +5,13 @@
         <h1 class="music-title">云音乐后台</h1>
       </div>
       <div class="nav-right">
-
-        <img
-          :src="user.avatar"
-          alt="头像"
-          class="avatar-style"
-        >
+        <router-link to="/person">
+          <img
+            :src="user.avatar"
+            alt="头像"
+            class="avatar-style"
+          >
+        </router-link>
         <h1 class="log-out">{{job}}</h1>
         <h1
           class="log-out"

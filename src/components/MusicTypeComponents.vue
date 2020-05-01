@@ -148,7 +148,10 @@ export default {
           thumbnail: this.thumbnailInput,
           type: this.typeInput
         },
-        headers: { Authorization: localStorage.getItem('token') }
+        headers: {
+          Authorization: localStorage.getItem('token'),
+          id: JSON.parse(localStorage.getItem('user')).id
+        }
       })
         .then((res) => {
           console.log(res)
@@ -163,7 +166,10 @@ export default {
         this.$axios({
           method: 'delete',
           url: this.GLOBAL.baseUrl + 'songList/batchDelete?roleId=' + this.authority + '&ids=' + this.ids,
-          headers: { Authorization: localStorage.getItem('token') }
+          headers: {
+            Authorization: localStorage.getItem('token'),
+            id: JSON.parse(localStorage.getItem('user')).id
+          }
         })
           .then((res) => {
             this.selectMusic()
@@ -203,7 +209,10 @@ export default {
           currentPage: this.page,
           pageSize: 12
         },
-        headers: { Authorization: localStorage.getItem('token') }
+        headers: {
+          Authorization: localStorage.getItem('token'),
+          id: JSON.parse(localStorage.getItem('user')).id
+        }
       })
         .then((res) => {
           console.log(res)

@@ -142,10 +142,6 @@ export default {
   mounted() {},
   methods: {
     update() {
-      console.log('1' + this.id)
-      console.log('2' + this.nameInput)
-      console.log('3' + this.thumbnailInput)
-      console.log('4' + this.typeInput)
       this.updateistrue = false
       this.$axios({
         method: 'put',
@@ -156,7 +152,10 @@ export default {
           thumbnail: this.thumbnailInput,
           type: this.typeInput
         },
-        headers: { Authorization: localStorage.getItem('token') }
+        headers: {
+          Authorization: localStorage.getItem('token'),
+          id: JSON.parse(localStorage.getItem('user')).id
+        }
       })
         .then((res) => {
           console.log(res)
@@ -167,11 +166,53 @@ export default {
         })
     },
     gongneng(btnId) {
+      if (btnId == 13) {
+        this.$axios({
+          method: 'get',
+          url: this.GLOBAL.baseUrl + 'songList/export?roleId=' + this.authority,
+          headers: {
+            Authorization: localStorage.getItem('token'),
+            id: JSON.parse(localStorage.getItem('user')).id
+          }
+        })
+          .then((res) => {
+            alert('成功')
+          })
+          .catch(function(error) {
+            console.log(error)
+          })
+      }
+      if (btnId == 12) {
+        this.$axios({
+          method: 'post',
+          url: this.GLOBAL.baseUrl + 'songList/blur/page?roleId=' + this.authority,
+          data: {
+            currentPage: this.page,
+            pageSize: 8,
+            field: this.searchInput
+          },
+          headers: {
+            Authorization: localStorage.getItem('token'),
+            id: JSON.parse(localStorage.getItem('user')).id
+          }
+        })
+          .then((res) => {
+            console.log(res)
+            this.musics = res.data.data
+            console.log(this.musics)
+          })
+          .catch(function(error) {
+            console.log(error)
+          })
+      }
       if (btnId == 14) {
         this.$axios({
           method: 'delete',
           url: this.GLOBAL.baseUrl + 'songList/batchDelete?roleId=' + this.authority + '&ids=' + this.ids,
-          headers: { Authorization: localStorage.getItem('token') }
+          headers: {
+            Authorization: localStorage.getItem('token'),
+            id: JSON.parse(localStorage.getItem('user')).id
+          }
         })
           .then((res) => {
             this.selectMusic()
@@ -209,9 +250,12 @@ export default {
         url: this.GLOBAL.baseUrl + '/songList/page?roleId=' + this.authority,
         data: {
           currentPage: this.page,
-          pageSize: 12
+          pageSize: 8
         },
-        headers: { Authorization: localStorage.getItem('token') }
+        headers: {
+          Authorization: localStorage.getItem('token'),
+          id: JSON.parse(localStorage.getItem('user')).id
+        }
       })
         .then((res) => {
           console.log(res)

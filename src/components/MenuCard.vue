@@ -2,7 +2,7 @@
   <div class="Menu-card cc-df">
     <Icon :type="item.icon" />
     <div v-if="item.path!=null">
-      <router-link :to="item.path">
+      <router-link :to="{name: item.path}">
         <p><b>{{item.title}}</b></p>
       </router-link>
     </div>
